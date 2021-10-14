@@ -6,10 +6,10 @@
 
 *Os demais projetos irei adicionando*
 
-[x] Room
-[x] Retrofit
-[ ] ViewModel
-[ ] LiveData
-[ ] Fragments
-[ ] Data Binding
-[ ] Testes Unitarios
+- [x] Room 
+- [x] Retrofit 
+- [ ] ViewModel 
+- [ ] LiveData 
+- [ ] Fragments 
+- [ ] Data Binding 
+- [ ] Testes Unitarios 
