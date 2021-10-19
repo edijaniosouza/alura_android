@@ -1,6 +1,7 @@
 package br.com.alura.technews.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import br.com.alura.technews.asynctask.BaseAsyncTask
 import br.com.alura.technews.database.dao.NoticiaDAO
@@ -12,20 +13,31 @@ class NoticiaRepository(
     private val webclient: NoticiaWebClient = NoticiaWebClient()
 ) {
 
-    private val liveData = MutableLiveData<Resource<List<Noticia>?>>()
+    private val mediador = MediatorLiveData<Resource<List<Noticia>?>>()
 
     fun buscaTodos(): LiveData<Resource<List<Noticia>?>> {
 
-        val atualizaNoticia: (List<Noticia>) -> Unit = {
-            liveData.value = Resource(it)
+        mediador.addSource(buscaInterno()){
+            mediador.value = Resource(dado = it)
         }
-        buscaInterno(quandoSucesso = atualizaNoticia)
-        buscaNaApi(quandoSucesso = atualizaNoticia, quandoFalha = {
-            val liveDataAtual = liveData.value
-            val resource = criaResourceDeFalha<List<Noticia>?>(liveDataAtual, it)
-            liveData.value = resource
+        val liveDataCacheFalha = MutableLiveData<Resource<List<Noticia>?>>()
+
+        mediador.addSource(liveDataCacheFalha){
+            val resourceAtual = mediador.value
+            val resourceNovo : Resource<List<Noticia>?> = if(resourceAtual != null){
+                Resource(resourceAtual.dado, erro = it.erro)
+            }else{
+                it
+            }
+
+            mediador.value = resourceNovo
+        }
+
+        buscaNaApi(quandoFalha = {
+            liveDataCacheFalha.value = Resource(dado = null, erro = it)
         })
-        return liveData
+
+        return mediador
     }
 
 
