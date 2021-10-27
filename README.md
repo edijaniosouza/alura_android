@@ -8,8 +8,8 @@
 
 - [x] Room 
 - [x] Retrofit 
-- [ ] ViewModel 
-- [ ] LiveData 
+- [x] ViewModel 
+- [x] LiveData 
 - [ ] Fragments 
 - [ ] Data Binding 
 - [ ] Testes Unitarios 
